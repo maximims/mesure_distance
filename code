@@ -1,0 +1,97 @@
+def mesure1():
+        
+  import time
+  import RPi.GPIO as GPIO
+
+  GPIO.setmode(GPIO.BOARD)
+  GPIO.setwarnings(False)
+
+  A = 7 #IN1
+  B = 11 #IN2
+  C = 13 #IN3
+  D = 15 #IN4
+  GPIO_TRIGGER = 23 #TRIG
+  GPIO_ECHO = 24 #ECHO
+
+  GPIO.setup(A, GPIO.OUT)
+  GPIO.setup(B, GPIO.OUT)
+  GPIO.setup(C, GPIO.OUT)
+  GPIO.setup(D, GPIO.OUT)
+  GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+  GPIO.setup(GPIO_ECHO, GPIO.IN)
+
+  def GPIO_SETUP(a,b,c,d):
+    GPIO.output(A, a)
+    GPIO.output(B, b)
+    GPIO.output(C, c)
+    GPIO.output(D, d)
+    time.sleep(0.001)
+
+  def DROITE_ROT(deg):
+
+    full_circle = 510.0
+    degree = full_circle/360*deg
+    GPIO_SETUP(0,0,0,0)
+
+    while degree > 0.0:
+        GPIO_SETUP(1,0,0,0)
+        GPIO_SETUP(1,1,0,0)
+        GPIO_SETUP(0,1,0,0)
+        GPIO_SETUP(0,1,1,0)
+        GPIO_SETUP(0,0,1,0)
+        GPIO_SETUP(0,0,1,1)
+        GPIO_SETUP(0,0,0,1)
+        GPIO_SETUP(1,0,0,1)
+        degree -= 1
+
+  def GAUCHE_ROT(deg):
+
+    full_circle = 510.0
+    degree = full_circle/360*deg
+    GPIO_SETUP(0,0,0,0)
+
+    while degree > 0.0:
+        GPIO_SETUP(1,0,0,1)
+        GPIO_SETUP(0,0,0,1)
+        GPIO_SETUP(0,0,1,1)
+        GPIO_SETUP(0,0,1,0)
+        GPIO_SETUP(0,1,1,0)
+        GPIO_SETUP(0,1,0,0)
+        GPIO_SETUP(1,1,0,0)
+        GPIO_SETUP(1,0,0,0)
+        degree -= 1
+
+  print("Mesure de la distance en cours...")
+
+  GPIO.output(GPIO_TRIGGER, False)
+  time.sleep(0.5)
+  GPIO.output(GPIO_TRIGGER, True)
+  time.sleep(0.00001)
+  GPIO.output(GPIO_TRIGGER, False)
+  start = time.time()
+
+  while GPIO.input(GPIO_ECHO)==0:
+      start = time.time()
+  while GPIO.input(GPIO_ECHO)==1:
+      stop = time.time()
+  temps = stop - start
+  distance = temps * 34000 #vitesse du son dans l'air
+
+  distance = distance / 2 #distance reelle calculee
+
+  print ("Distance : %.1f" % distance + "cm")
+
+  GPIO.cleanup() #reset des réglages
+
+  compteur=0
+  while compteur != 10:
+
+       RIGHT_TURN(45)
+       time.sleep(1)
+       LEFT_TURN(90)
+       time.sleep(1)
+       RIGHT_TURN(45)
+       GPIO_SETUP(0,0,0,0)
+       compteur += 1
+  
+
