@@ -63,6 +63,7 @@ def mesure1():
 
   print("Mesure de la distance en cours...")
 
+  GPIO.setmode(GPIO.BCM)
   GPIO.output(GPIO_TRIGGER, False)
   time.sleep(0.5)
   GPIO.output(GPIO_TRIGGER, True)
